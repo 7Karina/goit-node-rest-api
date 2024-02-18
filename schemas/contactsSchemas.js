@@ -1,3 +1,4 @@
+
 const Joi = require('joi');
 
 export const createContactSchema = Joi.object({});
@@ -11,3 +12,10 @@ export const updateContactSchema = Joi.object({
 module.exports = {
   updateContactSchema,
 };
+
+import Joi from 'joi';
+
+export const createContactSchema = Joi.object({});
+
+export const updateContactSchema = Joi.object({});
+
