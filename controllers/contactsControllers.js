@@ -1,12 +1,25 @@
+<<<<<<< Updated upstream
 
 const express = require('express');
 const HttpError = require('../helpers/HttpError.js');
 const contactsService = require('../services/contactsServices.js');
 const updateContactSchema = require('../schemas/contactsSchemas.js');
+=======
+import HttpError from '../helpers/HttpError.js';
+import { validate } from 'joi';
+import {
+  listContacts,
+  getContactById,
+  addContact,
+  removeContact,
+  updateContactServ,
+} from '../services/contactsServices.js';
+import { updateContactSchema } from '../schemas/contactsSchemas.js';
+>>>>>>> Stashed changes
 
 export const getAllContacts = async (req, res) => {
   try {
-    const contacts = await contactsService.listContacts();
+    const contacts = await listContacts();
     res.status(200).json(contacts);
   } catch (error) {
     console.error('Error getting all contacts:', error);
@@ -17,7 +30,7 @@ export const getAllContacts = async (req, res) => {
 export const getOneContact = async (req, res) => {
   try {
     const contactId = req.params.id;
-    const contact = await contactsService.getContactById(contactId);
+    const contact = await getContactById(contactId);
     if (contact) {
       res.status(200).json(contact);
     } else {
@@ -31,7 +44,7 @@ export const getOneContact = async (req, res) => {
 
 export const deleteContact = async (req, res) => {
   const contactId = req.params.id;
-  const deleteContact = await contactsService.removeContact(contactId);
+  const deleteContact = await removeContact(contactId);
   if (deleteContact) {
     res.status(200).json(deleteContact);
   } else {
@@ -41,13 +54,13 @@ export const deleteContact = async (req, res) => {
 
 export const createContact = async (req, res) => {
   try {
-    const { error } = contactsSchemas.validate(req.body);
+    const { error } = validate(req.body);
     if (error) {
       return res.status(400).json({ message: error.message });
     }
 
     const { name, email, phone } = req.body;
-    const newContact = await contactsService.addContact(name, email, phone);
+    const newContact = await addContact(name, email, phone);
 
     res.status(201).json(newContact);
   } catch (error) {
@@ -70,12 +83,12 @@ export const updateContact = async (req, res) => {
       throw new HttpError(400, error.message);
     }
 
-    const updatedContact = await contactsService.updateContact(
+    const updatedContactServ = await updateContactSchema(
       contactId,
       updateFields
     );
-    if (updatedContact) {
-      res.status(200).json(updatedContact);
+    if (updatedContactServ) {
+      res.status(200).json(updatedContactServ);
     } else {
       throw new HttpError(404, 'Not found');
     }

@@ -1,6 +1,6 @@
-const fs = require('node:fs/promises');
-const path = require('node:path');
-const crypto = require('crypto');
+import fs from 'fs/promises';
+import path from 'node:path';
+import crypto from 'crypto';
 
 const contactsPath = path.join(__dirname, 'db', 'contacts.json');
 console.log(contactsPath);
@@ -81,9 +81,30 @@ async function addContact(name, email, phone) {
   }
 }
 
+async function updateContactServ(contactId, updatedFields) {
+  try {
+    const contacts = await readContacts();
+    const index = contacts.findIndex(contact => contact.id === contactId);
+    if (index !== -1) {
+      contacts[index] = {
+        ...contacts[index],
+        ...updatedFields,
+      };
+      await writeContacts(contacts);
+      return contacts[index];
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error('Error updating contact:', error);
+    throw error;
+  }
+}
+
 module.exports = {
   listContacts,
   getContactById,
   removeContact,
   addContact,
+  updateContactServ,
 };
