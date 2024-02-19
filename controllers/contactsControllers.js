@@ -1,3 +1,4 @@
+
 const express = require('express');
 const HttpError = require('../helpers/HttpError.js');
 const contactsService = require('../services/contactsServices.js');
@@ -85,3 +86,16 @@ export const updateContact = async (req, res) => {
     res.status(status).json({ message });
   }
 };
+
+import contactsService from '../services/contactsServices.js';
+
+export const getAllContacts = (req, res) => {};
+
+export const getOneContact = (req, res) => {};
+
+export const deleteContact = (req, res) => {};
+
+export const createContact = (req, res) => {};
+
+export const updateContact = (req, res) => {};
+

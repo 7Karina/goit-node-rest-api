@@ -1,4 +1,8 @@
+
 const express = require('express');
+
+import express from 'express';
+
 import {
   getAllContacts,
   getOneContact,
@@ -18,5 +22,15 @@ contactsRouter.delete('/api/contacts/:id', deleteContact);
 contactsRouter.post(' /api/contacts', createContact);
 
 contactsRouter.put('/api/contacts/:id', updateContact);
+
+contactsRouter.get('/', getAllContacts);
+
+contactsRouter.get('/:id', getOneContact);
+
+contactsRouter.delete('/:id', deleteContact);
+
+contactsRouter.post('/', createContact);
+
+contactsRouter.put('/:id', updateContact);
 
 export default contactsRouter;
