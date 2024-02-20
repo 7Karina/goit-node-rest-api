@@ -1,10 +1,4 @@
-<<<<<<< Updated upstream
 
-const express = require('express');
-const HttpError = require('../helpers/HttpError.js');
-const contactsService = require('../services/contactsServices.js');
-const updateContactSchema = require('../schemas/contactsSchemas.js');
-=======
 import HttpError from '../helpers/HttpError.js';
 import { validate } from 'joi';
 import {
@@ -15,7 +9,8 @@ import {
   updateContactServ,
 } from '../services/contactsServices.js';
 import { updateContactSchema } from '../schemas/contactsSchemas.js';
->>>>>>> Stashed changes
+import contactsService from '../services/contactsServices.js';
+
 
 export const getAllContacts = async (req, res) => {
   try {
@@ -100,15 +95,9 @@ export const updateContact = async (req, res) => {
   }
 };
 
-import contactsService from '../services/contactsServices.js';
 
-export const getAllContacts = (req, res) => {};
 
-export const getOneContact = (req, res) => {};
 
-export const deleteContact = (req, res) => {};
 
-export const createContact = (req, res) => {};
 
-export const updateContact = (req, res) => {};
 
