@@ -1,9 +1,5 @@
-<<<<<<< Updated upstream
 
-const Joi = require('joi');
-=======
 import Joi from 'joi';
->>>>>>> Stashed changes
 
 export const createContactSchema = Joi.object({
   name: Joi.string().required(),
@@ -18,17 +14,10 @@ export const updateContactSchema = Joi.object({
   email: Joi.string().email(),
   phone: Joi.string().pattern(/^[0-9]{3}-[0-9]{2}-[0-9]{2}$/),
 }).min(1);
-<<<<<<< Updated upstream
 
-module.exports = {
-  updateContactSchema,
-};
 
-import Joi from 'joi';
 
-export const createContactSchema = Joi.object({});
 
-export const updateContactSchema = Joi.object({});
 
-=======
->>>>>>> Stashed changes
+
+

@@ -1,4 +1,5 @@
-import HttpError from '../helpers/HttpError';
+import HttpError from '../helpers/HttpError.js';
+
 import { validate } from 'joi';
 import {
   listContacts,

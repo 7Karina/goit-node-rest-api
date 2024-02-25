@@ -20,14 +20,4 @@ contactsRouter.post(' /api/contacts', createContact);
 
 contactsRouter.put('/api/contacts/:id', updateContact);
 
-contactsRouter.get('/', getAllContacts);
-
-contactsRouter.get('/:id', getOneContact);
-
-contactsRouter.delete('/:id', deleteContact);
-
-contactsRouter.post('/', createContact);
-
-contactsRouter.put('/:id', updateContact);
-
 export default contactsRouter;

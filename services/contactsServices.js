@@ -100,11 +100,3 @@ async function updateContactSer(contactId, updatedFields) {
     throw error;
   }
 }
-
-module.exports = {
-  listContacts,
-  getContactById,
-  removeContact,
-  addContact,
-  updateContactSer,
-};
