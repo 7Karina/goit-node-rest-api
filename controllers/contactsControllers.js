@@ -1,21 +1,13 @@
-<<<<<<< Updated upstream
-
-const express = require('express');
-const HttpError = require('../helpers/HttpError.js');
-const contactsService = require('../services/contactsServices.js');
-const updateContactSchema = require('../schemas/contactsSchemas.js');
-=======
-import HttpError from '../helpers/HttpError.js';
+import HttpError from '../helpers/HttpError';
 import { validate } from 'joi';
 import {
   listContacts,
   getContactById,
   addContact,
   removeContact,
-  updateContactServ,
+  updateContactSer,
 } from '../services/contactsServices.js';
 import { updateContactSchema } from '../schemas/contactsSchemas.js';
->>>>>>> Stashed changes
 
 export const getAllContacts = async (req, res) => {
   try {
@@ -83,12 +75,9 @@ export const updateContact = async (req, res) => {
       throw new HttpError(400, error.message);
     }
 
-    const updatedContactServ = await updateContactSchema(
-      contactId,
-      updateFields
-    );
-    if (updatedContactServ) {
-      res.status(200).json(updatedContactServ);
+    const updatedContact = await updateContactSer(contactId, updateFields);
+    if (updatedContact) {
+      res.status(200).json(updatedContact);
     } else {
       throw new HttpError(404, 'Not found');
     }
@@ -99,16 +88,3 @@ export const updateContact = async (req, res) => {
     res.status(status).json({ message });
   }
 };
-
-import contactsService from '../services/contactsServices.js';
-
-export const getAllContacts = (req, res) => {};
-
-export const getOneContact = (req, res) => {};
-
-export const deleteContact = (req, res) => {};
-
-export const createContact = (req, res) => {};
-
-export const updateContact = (req, res) => {};
-

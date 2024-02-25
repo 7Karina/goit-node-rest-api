@@ -81,7 +81,7 @@ async function addContact(name, email, phone) {
   }
 }
 
-async function updateContactServ(contactId, updatedFields) {
+async function updateContactSer(contactId, updatedFields) {
   try {
     const contacts = await readContacts();
     const index = contacts.findIndex(contact => contact.id === contactId);
@@ -106,5 +106,5 @@ module.exports = {
   getContactById,
   removeContact,
   addContact,
-  updateContactServ,
+  updateContactSer,
 };

@@ -1,12 +1,5 @@
-<<<<<<< Updated upstream
-
-const express = require('express');
-
 import express from 'express';
 
-=======
-import express from 'express';
->>>>>>> Stashed changes
 import {
   getAllContacts,
   getOneContact,
