@@ -2,10 +2,10 @@ import fs from 'fs/promises';
 import path from 'node:path';
 import crypto from 'crypto';
 
+const __dirname = path.resolve(path.dirname(''));
 const contactsPath = path.join(__dirname, 'db', 'contacts.json');
-console.log(contactsPath);
 
-async function readContacts() {
+export async function readContacts() {
   try {
     const data = await fs.readFile(contactsPath, { encoding: 'utf-8' });
     return JSON.parse(data);
@@ -15,7 +15,7 @@ async function readContacts() {
   }
 }
 
-async function writeContacts(contacts) {
+export async function writeContacts(contacts) {
   try {
     const data = JSON.stringify(contacts, null, 2);
     await fs.writeFile(contactsPath, data);
@@ -25,7 +25,7 @@ async function writeContacts(contacts) {
   }
 }
 
-async function listContacts() {
+export async function listContacts() {
   try {
     const contacts = await readContacts();
     return contacts;
@@ -35,7 +35,7 @@ async function listContacts() {
   }
 }
 
-async function getContactById(contactId) {
+export async function getContactById(contactId) {
   try {
     const contacts = await readContacts();
     const contact = contacts.find(contact => contact.id === contactId);
@@ -46,7 +46,7 @@ async function getContactById(contactId) {
   }
 }
 
-async function removeContact(contactId) {
+export async function removeContact(contactId) {
   try {
     const contacts = await readContacts();
     const index = contacts.findIndex(contact => contact.id === contactId);
@@ -63,7 +63,7 @@ async function removeContact(contactId) {
   }
 }
 
-async function addContact(name, email, phone) {
+export async function addContact(name, email, phone) {
   try {
     const contacts = await listContacts();
     const newContact = {
@@ -81,7 +81,7 @@ async function addContact(name, email, phone) {
   }
 }
 
-async function updateContactSer(contactId, updatedFields) {
+export async function updateContactSer(contactId, updatedFields) {
   try {
     const contacts = await readContacts();
     const index = contacts.findIndex(contact => contact.id === contactId);

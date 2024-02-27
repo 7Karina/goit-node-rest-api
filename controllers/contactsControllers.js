@@ -1,6 +1,6 @@
 import HttpError from '../helpers/HttpError.js';
-
-import { validate } from 'joi';
+import pkg from 'joi';
+const { validate } = pkg;
 import {
   listContacts,
   getContactById,
