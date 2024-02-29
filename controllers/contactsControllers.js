@@ -1,6 +1,5 @@
 import HttpError from '../helpers/HttpError.js';
-import pkg from 'joi';
-const { validate } = pkg;
+import Joi from 'joi';
 import {
   listContacts,
   getContactById,
@@ -8,7 +7,10 @@ import {
   removeContact,
   updateContactSer,
 } from '../services/contactsServices.js';
-import { updateContactSchema } from '../schemas/contactsSchemas.js';
+import {
+  createContactSchema,
+  updateContactSchema,
+} from '../schemas/contactsSchemas.js';
 
 export const getAllContacts = async (req, res) => {
   try {
@@ -47,7 +49,7 @@ export const deleteContact = async (req, res) => {
 
 export const createContact = async (req, res) => {
   try {
-    const { error } = validate(req.body);
+    const { error } = Joi.validate(req.body, createContactSchema);
     if (error) {
       return res.status(400).json({ message: error.message });
     }
@@ -71,7 +73,7 @@ export const updateContact = async (req, res) => {
       throw new HttpError(400, 'Body must have at least one field');
     }
 
-    const { error } = updateContactSchema.validate(updateFields);
+    const { error } = Joi.validate(updateFields, updateContactSchema);
     if (error) {
       throw new HttpError(400, error.message);
     }
