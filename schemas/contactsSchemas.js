@@ -1,23 +1,18 @@
-
 import Joi from 'joi';
 
 export const createContactSchema = Joi.object({
   name: Joi.string().required(),
-  email: Joi.string().email().required(),
-  phone: Joi.string()
-    .pattern(/^[0-9]{3}-[0-9]{2}-[0-9]{2}$/)
+  email: Joi.string()
+    .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
     .required(),
+  phone: Joi.string().required(),
 });
 
 export const updateContactSchema = Joi.object({
   name: Joi.string(),
-  email: Joi.string().email(),
-  phone: Joi.string().pattern(/^[0-9]{3}-[0-9]{2}-[0-9]{2}$/),
+  email: Joi.string().email({
+    minDomainSegments: 2,
+    tlds: { allow: ['com', 'net'] },
+  }),
+  phone: Joi.string(),
 }).min(1);
-
-
-
-
-
-
-

@@ -81,22 +81,14 @@ export async function addContact(name, email, phone) {
   }
 }
 
-export async function updateContactSer(contactId, updatedFields) {
-  try {
-    const contacts = await readContacts();
-    const index = contacts.findIndex(contact => contact.id === contactId);
-    if (index !== -1) {
-      contacts[index] = {
-        ...contacts[index],
-        ...updatedFields,
-      };
-      await writeContacts(contacts);
-      return contacts[index];
-    } else {
-      return null;
-    }
-  } catch (error) {
-    console.error('Error updating contact:', error);
-    throw error;
+export async function updateContactSer(contactId, body) {
+  const contacts = await listContacts();
+  const contact = contacts.find(item => item.id === contactId);
+  const index = contacts.findIndex(item => item.id === contactId);
+  if (index < 0) {
+    return null;
   }
+  contacts[index] = { ...contact, ...body };
+  await fs.writeFile(contactsPath, JSON.stringify(contacts));
+  return { ...contact, ...body };
 }

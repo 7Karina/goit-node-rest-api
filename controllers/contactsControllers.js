@@ -1,5 +1,4 @@
 import HttpError from '../helpers/HttpError.js';
-import Joi from 'joi';
 import {
   listContacts,
   getContactById,
@@ -49,7 +48,10 @@ export const deleteContact = async (req, res) => {
 
 export const createContact = async (req, res) => {
   try {
-    const { error } = Joi.validate(req.body, createContactSchema);
+    const { error } = createContactSchema.validate(
+      req.body,
+      createContactSchema
+    );
     if (error) {
       return res.status(400).json({ message: error.message });
     }
@@ -65,29 +67,19 @@ export const createContact = async (req, res) => {
 };
 
 export const updateContact = async (req, res) => {
+  const contactId = req.params.id;
+  const body = req.body;
+  if (Object.keys(body).length === 0) {
+    res.status(400).json({ message: 'Body must have at least one field' });
+  }
   try {
-    const contactId = req.params.id;
-    const updateFields = req.body;
-
-    if (Object.keys(updateFields).length === 0) {
-      throw new HttpError(400, 'Body must have at least one field');
+    const updateContact = await updateContactSer(contactId, body);
+    if (!updateContact) {
+      res.status(404).json({ message: 'Not found' });
+      return;
     }
-
-    const { error } = Joi.validate(updateFields, updateContactSchema);
-    if (error) {
-      throw new HttpError(400, error.message);
-    }
-
-    const updatedContact = await updateContactSer(contactId, updateFields);
-    if (updatedContact) {
-      res.status(200).json(updatedContact);
-    } else {
-      throw new HttpError(404, 'Not found');
-    }
-  } catch (error) {
-    console.error('Error updating contact:', error);
-    const status = error.status || 500;
-    const message = error.message || 'Internal Server Error';
-    res.status(status).json({ message });
+    return res.status(200).json(updateContact);
+  } catch (e) {
+    console.log(e.message);
   }
 };
