@@ -48,10 +48,7 @@ export const deleteContact = async (req, res) => {
 
 export const createContact = async (req, res) => {
   try {
-    const { error } = createContactSchema.validate(
-      req.body,
-      createContactSchema
-    );
+    const { error } = createContactSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ message: error.message });
     }
