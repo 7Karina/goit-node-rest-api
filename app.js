@@ -1,8 +1,22 @@
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 
 import contactsRouter from './routes/contactsRouter.js';
+
+dotenv.config();
+
+const MONGODB_URI = process.env.MONGODB_URI;
+
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => console.log('Database connection successful'))
+  .catch(e => {
+    console.log('Error conection', e);
+    process.exit(1);
+  });
 
 const app = express();
 
