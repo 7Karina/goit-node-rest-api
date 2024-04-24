@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { Contact } from '../DBModels/contactModel.js';
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET;
