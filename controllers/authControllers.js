@@ -57,7 +57,7 @@ export const login = async (req, res) => {
   }
 };
 
-export const logout = async (req, res) => {
+export const logout = async (req, res, next) => {
   try {
     const { authorization } = req.headers;
     const token = authorization.split(' ')[1];
@@ -68,16 +68,27 @@ export const logout = async (req, res) => {
 
     res.status(204).json();
   } catch (error) {
-    console.log(error.message);
+    next(error);
   }
 };
 
-export const currentUser = async (req, res) => {
+export const currentUser = async (req, res, next) => {
   try {
     const { token } = req.user;
     const decoded = jwt.verify(token, JWT_SECRET);
-    console.log(decoded);
+
+    const userId = decoded.id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    res.status(200).json({
+      email: user.email,
+      subscription: user.subscription,
+    });
   } catch (error) {
-    console.log(error.message);
+    next(error);
   }
 };

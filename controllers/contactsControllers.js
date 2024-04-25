@@ -16,6 +16,7 @@ export const getAllContacts = async (req, res) => {
     res.status(200).json(contacts);
   } catch (error) {
     console.log(error.message);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -31,6 +32,7 @@ export const getOneContact = async (req, res) => {
     res.status(200).json(contact);
   } catch (error) {
     console.log(error.message);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -49,6 +51,7 @@ export const deleteContact = async (req, res) => {
     res.status(200).json(deleteContact);
   } catch (error) {
     console.log(error.message);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -60,6 +63,7 @@ export const createContact = async (req, res) => {
     res.status(201).json(createContact);
   } catch (error) {
     console.log(error.message);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -88,6 +92,7 @@ export const updateContact = async (req, res) => {
     return res.status(200).json(updateContact);
   } catch (e) {
     console.log(e.message);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -105,5 +110,7 @@ export const updateStatusContact = async (req, res) => {
       return;
     }
     res.status(200).json(result);
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
 };
