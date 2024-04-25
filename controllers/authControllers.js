@@ -63,7 +63,9 @@ export const logout = async (req, res) => {
     const token = authorization.split(' ')[1];
 
     const { id } = jwt.verify(token, JWT_SECRET);
+
     await User.findByIdAndUpdate(id, { token: null });
+
     res.status(204).json();
   } catch (error) {
     console.log(error.message);
@@ -72,15 +74,9 @@ export const logout = async (req, res) => {
 
 export const currentUser = async (req, res) => {
   try {
-    const { authorization } = req.headers;
-    const token = authorization.split(' ')[1];
-
-    const { id } = jwt.verify(token, JWT_SECRET);
-    const user = await User.findById(id);
-    res.status(200).json({
-      email: user.email,
-      subscription: user.subscription,
-    });
+    const { token } = req.user;
+    const decoded = jwt.verify(token, JWT_SECRET);
+    console.log(decoded);
   } catch (error) {
     console.log(error.message);
   }
