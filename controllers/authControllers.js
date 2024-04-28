@@ -2,33 +2,35 @@ import { User } from '../DBModels/userModel.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import 'dotenv/config';
+import HttpError from '../helpers/HttpError.js';
 const JWT_SECRET = process.env.JWT_SECRET;
 
-export const register = async (req, res) => {
+export const register = async (req, res, next) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
+  try {
+    if (user) {
+      throw new HttpError(409, { message: 'Email in use' });
+    }
 
-  if (user) {
-    res.status(409).json({
-      message: 'Email in use',
+    const hashPassword = await bcrypt.hash(password, 10);
+    const newUser = await User.create({ ...req.body, password: hashPassword });
+
+    res.status(201).json({
+      user: {
+        email: newUser.email,
+        subscription: newUser.subscription,
+      },
     });
+  } catch (error) {
+    next(error);
   }
-
-  const hashPassword = await bcrypt.hash(password, 10);
-  const newUser = await User.create({ ...req.body, password: hashPassword });
-
-  res.status(201).json({
-    user: {
-      email: newUser.email,
-      subscription: newUser.subscription,
-    },
-  });
 };
 
-export const login = async (req, res) => {
-  const { email, password } = req.body;
-
+export const login = async (req, res, next) => {
   try {
+    const { email, password } = req.body;
+
     const user = await User.findOne({ email });
     if (!user) {
       res.status(401).json({ message: 'Email or password is incorrect' });
@@ -53,20 +55,16 @@ export const login = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error.message);
+    next(error);
   }
 };
 
 export const logout = async (req, res, next) => {
   try {
-    const { authorization } = req.headers;
-    const token = authorization.split(' ')[1];
-
-    const { id } = jwt.verify(token, JWT_SECRET);
-
+    const { id } = req.user;
     await User.findByIdAndUpdate(id, { token: null });
 
-    res.status(204).json();
+    throw new HttpError(204);
   } catch (error) {
     next(error);
   }
@@ -74,20 +72,8 @@ export const logout = async (req, res, next) => {
 
 export const currentUser = async (req, res, next) => {
   try {
-    const { token } = req.user;
-    const decoded = jwt.verify(token, JWT_SECRET);
-
-    const userId = decoded.id;
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(401).json({ message: 'Unauthorized' });
-    }
-
-    res.status(200).json({
-      email: user.email,
-      subscription: user.subscription,
-    });
+    const { email, subscription } = req.user;
+    throw new HttpError(200, { email, subscription });
   } catch (error) {
     next(error);
   }
