@@ -10,7 +10,7 @@ export const register = async (req, res, next) => {
   const user = await User.findOne({ email });
   try {
     if (user) {
-      throw new HttpError(409, { message: 'Email in use' });
+      throw HttpError(409, { message: 'Email in use' });
     }
 
     const hashPassword = await bcrypt.hash(password, 10);
@@ -64,7 +64,7 @@ export const logout = async (req, res, next) => {
     const { id } = req.user;
     await User.findByIdAndUpdate(id, { token: null });
 
-    throw new HttpError(204);
+    res.status(204).json();
   } catch (error) {
     next(error);
   }
@@ -73,7 +73,11 @@ export const logout = async (req, res, next) => {
 export const currentUser = async (req, res, next) => {
   try {
     const { email, subscription } = req.user;
-    throw new HttpError(200, { email, subscription });
+
+    res.status(200).json({
+      email: email,
+      subscription: subscription,
+    });
   } catch (error) {
     next(error);
   }

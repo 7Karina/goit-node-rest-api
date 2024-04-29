@@ -12,7 +12,7 @@ export const validateToken = async (req, res, next) => {
     const user = await User.findById(id);
 
     if (!user || !user.token || user.token !== token) {
-      throw new HttpError(401, { message: 'Not authorized' });
+      throw  HttpError(401, { message: 'Not authorized' });
     }
     req.user = user;
     next();
@@ -21,6 +21,6 @@ export const validateToken = async (req, res, next) => {
   }
   if (bearer !== 'Bearer') {
     console.log(bearer !== 'Bearer');
-    throw new HttpError(401, { message: 'Not authorized' });
+    throw  HttpError(401, { message: 'Not authorized' });
   }
 };

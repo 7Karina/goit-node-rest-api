@@ -12,7 +12,7 @@ export const getAllContacts = async (req, res, next) => {
 
     const contacts = await Contact.find({ owner: userId });
     if (!contacts) {
-      throw new HttpError(404, { message: 'Not found' });
+      throw HttpError(404, { message: 'Not found' });
     }
     res.status(200).json(contacts);
   } catch (error) {
@@ -27,7 +27,7 @@ export const getOneContact = async (req, res, next) => {
     const contact = await Contact.findOne({ owner: userId, _id: id });
 
     if (!contact) {
-      throw new HttpError(404, { message: 'Not found' });
+      throw HttpError(404, { message: 'Not found' });
     }
     res.status(200).json(contact);
   } catch (error) {
@@ -40,12 +40,12 @@ export const deleteContact = async (req, res, next) => {
   const userId = req.user._id;
 
   try {
-    const deleteContact = await Contact.findByIdAndDelete({
+    const deleteContact = await Contact.findOneAndDelete({
       owner: userId,
       _id: id,
     });
     if (!deleteContact) {
-      throw new HttpError(404, { message: 'Not found' });
+      throw HttpError(404, { message: 'Not found' });
     }
     res.status(200).json(deleteContact);
   } catch (error) {
@@ -69,7 +69,7 @@ export const updateContact = async (req, res, next) => {
   const { id } = req.params;
   const body = req.body;
   if (Object.keys(body).length === 0) {
-    throw new HttpError(400, { message: 'Body must have at least one field' });
+    throw HttpError(400, { message: 'Body must have at least one field' });
   }
   try {
     const updateContact = await Contact.findOneAndUpdate(
@@ -83,7 +83,7 @@ export const updateContact = async (req, res, next) => {
       }
     );
     if (!updateContact) {
-      throw new HttpError(404, { message: 'Not found' });
+      throw HttpError(404, { message: 'Not found' });
     }
     return res.status(200).json(updateContact);
   } catch (e) {
@@ -101,7 +101,7 @@ export const updateStatusContact = async (req, res, next) => {
       { new: true }
     );
     if (!result) {
-      throw new HttpError(404, { message: 'Not found' });
+      throw HttpError(404, { message: 'Not found' });
     }
     res.status(200).json(result);
   } catch (error) {
