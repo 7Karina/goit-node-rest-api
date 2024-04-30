@@ -1,83 +1,110 @@
 import mongoose from 'mongoose';
-import { Contact } from '../DBModels/model.js';
+import { Contact } from '../DBModels/contactModel.js';
+import 'dotenv/config';
+import jwt from 'jsonwebtoken';
+import HttpError from '../helpers/HttpError.js';
 
-export const getAllContacts = async (req, res) => {
+const JWT_SECRET = process.env.JWT_SECRET;
+
+export const getAllContacts = async (req, res, next) => {
   try {
-    const contacts = await Contact.find();
+    const userId = req.user._id;
+
+    const contacts = await Contact.find({ owner: userId });
     if (!contacts) {
-      res.status(404).json({ message: 'Nor found' });
+      throw HttpError(404, { message: 'Not found' });
     }
     res.status(200).json(contacts);
   } catch (error) {
-    console.log(error.message);
+    next(error);
   }
 };
 
-export const getOneContact = async (req, res) => {
+export const getOneContact = async (req, res, next) => {
+  const userId = req.user._id;
   const { id } = req.params;
   try {
-    const contact = await Contact.findById(id);
-    console.log(contact);
+    const contact = await Contact.findOne({ owner: userId, _id: id });
+
     if (!contact) {
-      res.status(404).json({ message: 'Not found' });
+      throw HttpError(404, { message: 'Not found' });
     }
+    res.status(200).json(contact);
   } catch (error) {
-    console.log(error.message);
+    next(error);
   }
 };
 
-export const deleteContact = async (req, res) => {
+export const deleteContact = async (req, res, next) => {
   const { id } = req.params;
+  const userId = req.user._id;
 
   try {
-    const deleteContact = await Contact.findByIdAndDelete(id);
+    const deleteContact = await Contact.findOneAndDelete({
+      owner: userId,
+      _id: id,
+    });
     if (!deleteContact) {
-      res.status(404).json({ message: 'Not found' });
+      throw HttpError(404, { message: 'Not found' });
     }
     res.status(200).json(deleteContact);
   } catch (error) {
-    console.log(error.message);
+    next(error);
   }
 };
 
-export const createContact = async (req, res) => {
+export const createContact = async (req, res, next) => {
+  const userId = req.user._id;
+
   try {
-    const createContact = await Contact.create(req.body);
+    const createContact = await Contact.create({ ...req.body, owner: userId });
     res.status(201).json(createContact);
   } catch (error) {
-    console.log(error.message);
+    next(error);
   }
 };
 
-export const updateContact = async (req, res) => {
+export const updateContact = async (req, res, next) => {
+  const userId = req.user._id;
   const { id } = req.params;
   const body = req.body;
   if (Object.keys(body).length === 0) {
-    res.status(400).json({ message: 'Body must have at least one field' });
+    throw HttpError(400, { message: 'Body must have at least one field' });
   }
   try {
-    const updateContact = await Contact.findByIdAndUpdate(id, body, {
-      new: true,
-    });
+    const updateContact = await Contact.findOneAndUpdate(
+      {
+        owner: userId,
+        _id: id,
+      },
+      body,
+      {
+        new: true,
+      }
+    );
     if (!updateContact) {
-      res.status(404).json({ message: 'Not found' });
-      return;
+      throw HttpError(404, { message: 'Not found' });
     }
     return res.status(200).json(updateContact);
   } catch (e) {
-    console.log(e.message);
+    next(error);
   }
 };
 
-export const updateStatusContact = async (req, res) => {
+export const updateStatusContact = async (req, res, next) => {
+  const userId = req.user._id;
   const { id } = req.params;
   try {
-    const result = await Contact.findByIdAndUpdate(id, req.body);
+    const result = await Contact.findOneAndUpdate(
+      { _id: id, owner: userId },
+      req.body,
+      { new: true }
+    );
     if (!result) {
-      res.status(404).json({ message: 'Not found' });
-      return;
+      throw HttpError(404, { message: 'Not found' });
     }
-    const contact = await Contact.findById(id);
-    res.status(200).json(contact);
-  } catch (error) {}
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
 };
