@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import crypto from 'crypto';
 
 const Schema = mongoose.Schema;
 const userSchema = new Schema(
@@ -20,6 +21,7 @@ const userSchema = new Schema(
       type: String,
       default: null,
     },
+    avatarURL: { type: String },
   },
   { versionKey: false }
 );

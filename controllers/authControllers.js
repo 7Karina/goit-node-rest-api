@@ -2,6 +2,10 @@ import { User } from '../DBModels/userModel.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import 'dotenv/config';
+import fs from 'fs/promises';
+import gravatar from 'gravatar';
+import path from 'path';
+import jimp from 'jimp';
 import HttpError from '../helpers/HttpError.js';
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -14,7 +18,13 @@ export const register = async (req, res, next) => {
     }
 
     const hashPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ ...req.body, password: hashPassword });
+    const avatarURL = gravatar.url(email);
+
+    const newUser = await User.create({
+      ...req.body,
+      password: hashPassword,
+      avatarURL,
+    });
 
     res.status(201).json({
       user: {
@@ -80,5 +90,44 @@ export const currentUser = async (req, res, next) => {
     });
   } catch (error) {
     next(error);
+  }
+};
+
+export const upDateAvatar = async (req, res) => {
+  const userId = req.user._id;
+
+  if (!req.file) {
+    res.status(400).json({ message: 'the request must contain a file' });
+    return;
+  }
+
+  try {
+    const tempDir = req.file.path;
+    const extname = path.extname(req.file.originalname);
+    const fileName = `${userId}${extname}`;
+    const publicDir = path.join(process.cwd(), `public/avatar/${fileName}`);
+
+    const image = await jimp.read(tempDir);
+    await image.resize(250, 250).writeAsync(publicDir);
+
+    let avatarURL;
+    if (req.user.avatarURL) {
+      avatarURL = req.user.avatarURL;
+    } else {
+      const email = req.user.email;
+      const emailHash = gravatar.url(email, { s: '250', d: 'robohash' });
+      avatarURL = `http://gravatar.com/avatar/${emailHash}.jpg?d=robohash`;
+    }
+
+    await User.findByIdAndUpdate(userId, { avatarURL });
+
+    await fs.unlink(tempDir);
+
+    console.log('avatarURL:', avatarURL);
+
+    res.status(200).json({ avatarURL });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
