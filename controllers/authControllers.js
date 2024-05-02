@@ -105,7 +105,8 @@ export const upDateAvatar = async (req, res) => {
     const tempDir = req.file.path;
     const extname = path.extname(req.file.originalname);
     const fileName = `${userId}${extname}`;
-    const publicDir = path.join(process.cwd(), `public/avatar/${fileName}`);
+    const publicDir = path.join(process.cwd(), `avatars/${fileName}`);
+    const avatarDir = path.join('avatars', fileName);
 
     const image = await jimp.read(tempDir);
     await image.resize(250, 250).writeAsync(publicDir);
@@ -114,18 +115,18 @@ export const upDateAvatar = async (req, res) => {
     if (req.user.avatarURL) {
       avatarURL = req.user.avatarURL;
     } else {
-      const email = req.user.email;
-      const emailHash = gravatar.url(email, { s: '250', d: 'robohash' });
-      avatarURL = `http://gravatar.com/avatar/${emailHash}.jpg?d=robohash`;
+      avatarURL = `/avatars/${emailHash}.jpg`;
     }
 
-    await User.findByIdAndUpdate(userId, { avatarURL });
+    await User.findByIdAndUpdate(
+      userId,
+      { avatarURL: avatarDir },
+      { new: true }
+    );
 
     await fs.unlink(tempDir);
 
-    console.log('avatarURL:', avatarURL);
-
-    res.status(200).json({ avatarURL });
+    res.status(200).json({ avatarURL: avatarDir });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
