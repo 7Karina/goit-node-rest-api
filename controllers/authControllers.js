@@ -43,7 +43,7 @@ export const login = async (req, res, next) => {
 
     const user = await User.findOne({ email });
     if (!user) {
-      res.status(401).json({ message: 'Email or password is incorrect' });
+      throw HttpError(401, { message: 'Email or password is incorrect' });
     }
     const passwordCompare = await bcrypt.compare(password, user.password);
 
@@ -93,32 +93,21 @@ export const currentUser = async (req, res, next) => {
   }
 };
 
-export const upDateAvatar = async (req, res) => {
-  const userId = req.user._id;
-
-  if (!req.file) {
-    res.status(400).json({ message: 'the request must contain a file' });
-    return;
-  }
-
+export const upDateAvatar = async (req, res, next) => {
   try {
+    const userId = req.user._id;
+
+    if (!req.file) {
+      throw HttpError(400, { message: 'the request must contain a file' });
+    }
     const tempDir = req.file.path;
-    const extname = path.extname(req.file.originalname);
-    const fileName = `${userId}${extname}`;
     const publicDir = path.join(process.cwd(), `avatars/${fileName}`);
     const avatarDir = path.join('avatars', fileName);
 
     const image = await jimp.read(tempDir);
     await image.resize(250, 250).writeAsync(publicDir);
 
-    let avatarURL;
-    if (req.user.avatarURL) {
-      avatarURL = req.user.avatarURL;
-    } else {
-      avatarURL = `/avatars/${emailHash}.jpg`;
-    }
-
-    await User.findByIdAndUpdate(
+    const updateUser = User.findByIdAndUpdate(
       userId,
       { avatarURL: avatarDir },
       { new: true }
@@ -128,7 +117,6 @@ export const upDateAvatar = async (req, res) => {
 
     res.status(200).json({ avatarURL: avatarDir });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    next(error);
   }
 };

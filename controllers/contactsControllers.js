@@ -11,9 +11,8 @@ export const getAllContacts = async (req, res, next) => {
     const userId = req.user._id;
 
     const contacts = await Contact.find({ owner: userId });
-    if (!contacts) {
-      throw HttpError(404, { message: 'Not found' });
-    }
+    if (!contacts) throw HttpError(404, { message: 'Not found' });
+
     res.status(200).json(contacts);
   } catch (error) {
     next(error);
