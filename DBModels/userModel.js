@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
-
+import gravatar from 'gravatar';
+import pkg from 'joi';
+const { required } = pkg;
 const Schema = mongoose.Schema;
 const userSchema = new Schema(
   {
@@ -21,6 +23,14 @@ const userSchema = new Schema(
       default: null,
     },
     avatarURL: { type: String },
+    verify: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+      required: [true, 'Verify token is required'],
+    },
   },
   { versionKey: false }
 );
