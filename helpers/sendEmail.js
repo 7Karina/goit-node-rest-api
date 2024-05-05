@@ -13,4 +13,4 @@ const nodeMailerConfig = {
   },
 };
 
-export const trasport = nodemailer.createTransport(nodeMailerConfig);
+export const transport = nodemailer.createTransport(nodeMailerConfig);

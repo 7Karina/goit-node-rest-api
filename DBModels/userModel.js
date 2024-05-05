@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import gravatar from 'gravatar';
-import { required } from 'joi';
+import pkg from 'joi';
+const { required } = pkg;
 const Schema = mongoose.Schema;
 const userSchema = new Schema(
   {

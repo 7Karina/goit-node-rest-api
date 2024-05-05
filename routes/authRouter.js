@@ -12,7 +12,7 @@ import { validateBody } from '../helpers/validateBody.js';
 import { schemas } from '../schemas/usersSchemas.js';
 import { emailSchema } from '../schemas/emailSchema.js';
 import { validateToken } from '../helpers/validateToken.js';
-import upload from '../middleWares/avatarUpLoad.js';
+import upload from '../middleWares/avatarUpload.js';
 
 const authRouter = express.Router();
 
