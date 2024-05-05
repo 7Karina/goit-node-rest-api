@@ -5,9 +5,12 @@ import {
   logout,
   currentUser,
   upDateAvatar,
+  verifyEmail,
+  resendVerifyEmail,
 } from '../controllers/authControllers.js';
 import { validateBody } from '../helpers/validateBody.js';
 import { schemas } from '../schemas/usersSchemas.js';
+import { emailSchema } from '../schemas/emailSchema.js';
 import { validateToken } from '../helpers/validateToken.js';
 import upload from '../middleWares/avatarUpLoad.js';
 
@@ -27,5 +30,9 @@ authRouter.patch(
   upload.single('avatar'),
   upDateAvatar
 );
+
+authRouter.get('/verify/:verificationToken', verifyEmail);
+
+authRouter.post('/verify', validateBody(emailSchema), resendVerifyEmail);
 
 export default authRouter;
